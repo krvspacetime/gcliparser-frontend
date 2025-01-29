@@ -4,6 +4,7 @@ import { FilterSearch } from "./FilterSearch";
 import { SheetLoader } from "./SheetLoader";
 import { DataView } from "./DataView";
 import { ClipboardTextArea } from "./ClipboardTextArea";
+import { notifications } from "@mantine/notifications";
 
 export interface Player {
   index: number;
@@ -29,21 +30,33 @@ const headers = [
 const omittedKeys = ["img_src_avatar", "caps", "index"];
 
 export const SheetsLayout = () => {
+  const [multiSelectInputValue, setMultiSelectInputValue] = useState<string[]>(
+    [],
+  );
   const [data, setData] = useState<Player[] | null>(null);
-  const [names, setNames] = useState<string[] | null>(null);
   const [selectedRows, setSelectedRows] = useState<Player[]>([]);
   const [selectedRowsIndex, setSelectedRowsIndex] = useState<number[]>([]);
   const tableHeaders = headers.map((head, idx) => {
     return <Table.Th key={idx}>{head}</Table.Th>;
   });
-  const [clipboard, setClipboard] = useState("");
 
-  const fetchData = async (name: string | null = null) => {
+  const fetchData = async () => {
     try {
-      const response = await fetch(`http://localhost:8000/df`);
+      const response = await fetch(`http://localhost:8000/df/cached`);
 
       if (!response) {
         throw new Error(`Error fetching data. ${response}`);
+      }
+
+      if (response.redirected) {
+        notifications.show({
+          title: "Redirected",
+          message: "Cached not found to fetching fresh dataframe.",
+          position: "top-right",
+          withCloseButton: true,
+          withBorder: true,
+          color: "red",
+        });
       }
 
       const data = await response.json();
@@ -55,34 +68,25 @@ export const SheetsLayout = () => {
     }
   };
 
-  const fetchNames = async () => {
-    try {
-      const response = await fetch("http://localhost:8000/col");
-
-      if (!response.ok) {
-        throw new Error("Error");
-      }
-
-      const names = await response.json();
-      console.log(names);
-      setNames(names);
-      return names;
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
   const handleRowClick = (
     event: React.MouseEvent<HTMLTableRowElement>,
     player: Player,
     index: number,
   ) => {
+    event.preventDefault();
     setSelectedRowsIndex((prev) => {
       const isSelected = prev.includes(index);
       if (isSelected) {
         return prev.filter((i) => i !== index);
       } else {
         return [...prev, index];
+      }
+    });
+    setMultiSelectInputValue((prev) => {
+      if (prev.includes(player.name)) {
+        return prev.filter((i) => i !== player.name);
+      } else {
+        return [...prev, player.name];
       }
     });
   };
@@ -106,6 +110,15 @@ export const SheetsLayout = () => {
       .join("\n");
   }, [selectedRows]);
 
+  const handleSelectionChange = (selectedValues: string[]) => {
+    // Assuming selected values are the names or identifiers of the rows
+    const selectedIndexes = selectedValues.map(
+      (value) => data?.findIndex((player) => player.name === value) || 0,
+    );
+    setSelectedRowsIndex(selectedIndexes);
+    setMultiSelectInputValue(selectedValues);
+  };
+
   useEffect(() => {
     fetchData();
   }, []);
@@ -120,7 +133,11 @@ export const SheetsLayout = () => {
   return (
     <>
       <div>
-        <FilterSearch data={data ?? []} />
+        <FilterSearch
+          data={data ?? []}
+          value={multiSelectInputValue}
+          onSelectionChange={handleSelectionChange}
+        />
         <section className="p-5">
           <SheetLoader data={data} />
           <Table stickyHeader withColumnBorders striped>
@@ -138,7 +155,7 @@ export const SheetsLayout = () => {
                       onClick={(event) => handleRowClick(event, d, d.index)}
                       style={{
                         backgroundColor: selectedRowsIndex.includes(d.index)
-                          ? "crimson"
+                          ? "gray"
                           : "transparent",
                         fontWeight: selectedRowsIndex.includes(d.index)
                           ? "bold"

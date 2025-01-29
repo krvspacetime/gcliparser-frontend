@@ -20,7 +20,7 @@ export const DataView = ({
       }}
     >
       <div
-        className="flex w-full items-center justify-between bg-red-500 px-2"
+        className="flex w-full items-center justify-between bg-zinc-300 px-2"
         style={{
           height: "30px",
         }}

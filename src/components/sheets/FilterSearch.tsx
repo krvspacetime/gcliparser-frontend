@@ -1,19 +1,28 @@
 import { MultiSelect } from "@mantine/core";
 import { Player } from "./SheetsLayout";
 
-export const FilterSearch = ({ data }: { data: Player[] }) => {
+export const FilterSearch = ({
+  data,
+  onSelectionChange,
+  value,
+}: {
+  data: Player[];
+  onSelectionChange: (selectedValues: string[]) => void;
+  value: string[];
+}) => {
+  const handleMultiSelectChange = (selectedValues: string[]) => {
+    onSelectionChange(selectedValues); // Call the handler passed from SheetsLayout
+  };
+
   return (
     <section className="flex w-full justify-between">
-      {/* <input
-        type="search"
-        className="m-2 min-w-[20%] border-[1px] border-black/30 indent-2"
-        placeholder="Search"
-      /> */}
       <MultiSelect
-        className="m-2 w-full border-[1px] border-black/30"
-        placeholder="Pick value"
+        className="m-2 w-full rounded-md border-[1px]"
+        placeholder="Select items"
         data={data && data.map((d) => d.name)}
         searchable
+        onChange={handleMultiSelectChange} // Update selection change handler
+        value={value}
       />
     </section>
   );

@@ -2,6 +2,7 @@ import { MantineProvider } from "@mantine/core";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { AppLayout } from "./AppLayout";
 import { SheetsLayout } from "./components/sheets/SheetsLayout";
+import { Notifications } from "@mantine/notifications";
 
 const router = createBrowserRouter([
   {
@@ -20,6 +21,7 @@ const router = createBrowserRouter([
 function App() {
   return (
     <MantineProvider defaultColorScheme="light">
+      <Notifications />
       <RouterProvider router={router} />
     </MantineProvider>
   );
