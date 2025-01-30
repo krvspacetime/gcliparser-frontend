@@ -1,21 +1,21 @@
-import { Player } from "./SheetsLayout";
+import { Supplier } from "./SheetsLayout";
 import { TiDeleteOutline } from "react-icons/ti";
 import { MdOutlineExpandMore } from "react-icons/md";
 import { useState } from "react";
 import { TbCopy } from "react-icons/tb";
 
 export const ClipboardItem = ({
-  player,
+  supplier,
   onClick,
 }: {
-  player: Player;
+  supplier: Supplier;
   onClick: (index: number) => void;
 }) => {
   const [expand, setExpand] = useState(false);
   return (
     <div>
       <div className="flex w-full items-center justify-between px-2">
-        <p className="">{player.name}</p>
+        <p className="">{supplier.name}</p>
         <div className="flex items-center gap-2">
           <TbCopy />
           <MdOutlineExpandMore
@@ -26,16 +26,16 @@ export const ClipboardItem = ({
             size={20}
             color="red"
             onClick={() => {
-              onClick(player.index);
+              onClick(supplier.index);
             }}
           />
         </div>
       </div>
       {expand && (
         <div className="block bg-emerald-100 px-3">
-          <p>Name: {player.name}</p>
-          <p>Position: {player.position}</p>
-          <p>Number: {player.number}</p>
+          <p>Name: {supplier.name}</p>
+          <p>Position: {supplier.contact_person}</p>
+          <p>Number: {supplier.contact_number}</p>
         </div>
       )}
     </div>

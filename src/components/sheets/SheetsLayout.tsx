@@ -1,44 +1,65 @@
 import { Table } from "@mantine/core";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
+import { FixedSizeList as List } from "react-window";
 import { FilterSearch } from "./FilterSearch";
 import { SheetLoader } from "./SheetLoader";
 import { DataView } from "./DataView";
 import { ClipboardTextArea } from "./ClipboardTextArea";
 import { notifications } from "@mantine/notifications";
 
-export interface Player {
+export interface Supplier {
   index: number;
   name: string;
-  position: string;
-  number: number;
-  date_of_birth: string;
-  caps: number;
-  goals: number;
-  assists: number;
+  location: string;
+  contact_person: string;
+  role: string;
+  item: string;
+  contact_number: string;
+  email: string;
 }
 
 const headers = [
-  "number",
-  "position",
-  "name",
-  "date_of_birth",
-  "caps",
-  "goals",
-  "assists",
+  "Index",
+  "Name",
+  "Location",
+  "Contact Person",
+  "Role",
+  "Item",
+  "Contact Number",
+  "Email",
 ];
 
 const omittedKeys = ["img_src_avatar", "caps", "index"];
+
+const ROW_HEIGHT = 35; // Adjust this value based on your table row height
+const HEADER_HEIGHT = 50; // Adjust this value based on your table header height
 
 export const SheetsLayout = () => {
   const [multiSelectInputValue, setMultiSelectInputValue] = useState<string[]>(
     [],
   );
-  const [data, setData] = useState<Player[] | null>(null);
-  const [selectedRows, setSelectedRows] = useState<Player[]>([]);
+  const [data, setData] = useState<Supplier[] | null>(null);
+  const [selectedRows, setSelectedRows] = useState<Supplier[]>([]);
   const [selectedRowsIndex, setSelectedRowsIndex] = useState<number[]>([]);
   const tableHeaders = headers.map((head, idx) => {
-    return <Table.Th key={idx}>{head}</Table.Th>;
+    return (
+      <Table.Th key={idx} style={{ minWidth: "150px", width: "150px" }}>
+        {head}
+      </Table.Th>
+    );
   });
+
+  const tableContainerRef = useRef<HTMLDivElement>(null);
+  const [containerHeight, setContainerHeight] = useState(500); // Default height
+
+  useEffect(() => {
+    if (tableContainerRef.current) {
+      const windowHeight = window.innerHeight;
+      const containerTop =
+        tableContainerRef.current.getBoundingClientRect().top;
+      setContainerHeight(windowHeight - containerTop - 100); // Subtract some padding
+    }
+  }, []);
 
   const fetchData = async () => {
     try {
@@ -70,7 +91,7 @@ export const SheetsLayout = () => {
 
   const handleRowClick = (
     event: React.MouseEvent<HTMLTableRowElement>,
-    player: Player,
+    supplier: Supplier,
     index: number,
   ) => {
     event.preventDefault();
@@ -83,12 +104,20 @@ export const SheetsLayout = () => {
       }
     });
     setMultiSelectInputValue((prev) => {
-      if (prev.includes(player.name)) {
-        return prev.filter((i) => i !== player.name);
+      if (prev.includes(supplier.name)) {
+        return prev.filter(
+          (i) => i.toLowerCase() !== supplier.name.toLowerCase(),
+        );
       } else {
-        return [...prev, player.name];
+        return [...prev, supplier.name];
       }
     });
+  };
+
+  const onClear = () => {
+    setMultiSelectInputValue([]);
+    setSelectedRows([]);
+    setSelectedRowsIndex([]);
   };
 
   const removeFromSelectedRow = (index: number) => {
@@ -96,27 +125,43 @@ export const SheetsLayout = () => {
   };
 
   const copyButtonValue = useMemo(() => {
-    return selectedRows
-      .map(
-        (row) =>
-          Object.entries(row)
-            .filter(([key]) => !omittedKeys.includes(key))
-            .map(
-              ([key, value]) =>
-                `${key.charAt(0).toUpperCase() + key.slice(1)}: ${value}`,
-            )
-            .join("\n") + "\n",
-      )
+    return selectedRowsIndex
+      .map((index) => {
+        const row = data?.find((d) => d.index === index); // Get the supplier using the index
+        if (!row) return ""; // Handle the case where row is undefined
+        if (row) {
+          return (
+            Object.entries(row)
+              .filter(([key]) => !omittedKeys.includes(key))
+              .map(
+                ([key, value]) =>
+                  `${key.charAt(0).toUpperCase() + key.slice(1)}: ${value}`,
+              )
+              .join("\n") + "\n"
+          );
+        } else {
+          return "";
+        }
+      })
       .join("\n");
-  }, [selectedRows]);
+  }, [selectedRowsIndex, data]);
 
   const handleSelectionChange = (selectedValues: string[]) => {
-    // Assuming selected values are the names or identifiers of the rows
-    const selectedIndexes = selectedValues.map(
-      (value) => data?.findIndex((player) => player.name === value) || 0,
-    );
-    setSelectedRowsIndex(selectedIndexes);
+    console.log("selectedValues", selectedValues);
+
+    // Update multiSelectInputValue directly from selectedValues
     setMultiSelectInputValue(selectedValues);
+
+    // Update selectedRowsIndex based on the selected values
+    const newSelectedRowsIndex = selectedValues
+      .map((value) => {
+        const supplier = data?.find((d) => d.name === value);
+        return supplier ? supplier.index : null; // Get the index or null if not found
+      })
+      .filter((index) => index !== null); // Filter out null values
+
+    // Set the new selected rows index
+    setSelectedRowsIndex(newSelectedRowsIndex as number[]);
   };
 
   useEffect(() => {
@@ -124,11 +169,67 @@ export const SheetsLayout = () => {
   }, []);
 
   useEffect(() => {
-    const selectedRows = data?.filter((player, index) =>
+    console.log("Data:", data);
+    console.log("Selected Rows Index:", selectedRowsIndex);
+
+    const selectedRows = data?.filter((supplier, index) =>
       selectedRowsIndex.includes(index),
     );
     setSelectedRows(selectedRows || []);
+    console.log("selectedRowsIndex", selectedRowsIndex);
   }, [data, selectedRowsIndex]);
+
+  const Row = ({
+    index,
+    style,
+  }: {
+    index: number;
+    style: React.CSSProperties;
+  }) => {
+    const d = data?.[index];
+    if (!d) return null;
+
+    return (
+      <Table.Tr
+        key={d.name + index}
+        onClick={(event) => handleRowClick(event, d, d.index)}
+        style={{
+          ...style,
+          backgroundColor: selectedRowsIndex.includes(d.index)
+            ? "lightgreen"
+            : "transparent",
+          display: "flex",
+          width: "100%",
+          minWidth: "fit-content",
+        }}
+      >
+        <Table.Td style={{ minWidth: "150px", width: "150px" }}>
+          {d.index}
+        </Table.Td>
+        <Table.Td style={{ minWidth: "150px", width: "150px" }}>
+          {d.name}
+        </Table.Td>
+        <Table.Td style={{ minWidth: "150px", width: "150px" }}>
+          {d.location}
+        </Table.Td>
+        <Table.Td style={{ minWidth: "150px", width: "150px" }}>
+          {d.contact_person}
+        </Table.Td>
+        <Table.Td style={{ minWidth: "150px", width: "150px" }}>
+          {d.role}
+        </Table.Td>
+        <Table.Td style={{ minWidth: "150px", width: "150px" }}>
+          {d.item}
+        </Table.Td>
+        <Table.Td style={{ minWidth: "150px", width: "150px" }}>
+          {d.contact_number}
+        </Table.Td>
+        <Table.Td style={{ minWidth: "150px", width: "150px" }}>
+          {d.email}
+        </Table.Td>
+      </Table.Tr>
+    );
+  };
 
   return (
     <>
@@ -137,42 +238,55 @@ export const SheetsLayout = () => {
           data={data ?? []}
           value={multiSelectInputValue}
           onSelectionChange={handleSelectionChange}
+          onClear={onClear}
         />
         <section className="p-5">
           <SheetLoader data={data} />
-          <Table stickyHeader withColumnBorders striped>
-            <Table.Thead className="z-[1001]">
-              <Table.Tr className="font-bolder text-black">
-                {tableHeaders}
-              </Table.Tr>
-            </Table.Thead>
-            <Table.Tbody>
-              {data &&
-                data.map((d, idx) => {
-                  return (
-                    <Table.Tr
-                      key={d.name + idx}
-                      onClick={(event) => handleRowClick(event, d, d.index)}
-                      style={{
-                        backgroundColor: selectedRowsIndex.includes(d.index)
-                          ? "lightgreen"
-                          : "transparent",
-                      }}
-                    >
-                      <Table.Td>{d.number}</Table.Td>
-                      <Table.Td>{d.position}</Table.Td>
-                      <Table.Td>{d.name}</Table.Td>
-                      <Table.Td>{d.date_of_birth}</Table.Td>
-                      <Table.Td>{d.caps}</Table.Td>
-                      <Table.Td>{d.goals}</Table.Td>
-                      <Table.Td>{d.assists}</Table.Td>
-                    </Table.Tr>
-                  );
-                })}
-            </Table.Tbody>
-          </Table>
+          <div
+            ref={tableContainerRef}
+            style={{
+              height: containerHeight,
+              width: "100%",
+              overflow: "hidden",
+            }}
+          >
+            <Table
+              stickyHeader
+              striped
+              style={{ width: "100%", tableLayout: "fixed" }}
+            >
+              <Table.Thead
+                className="z-[1001]"
+                style={{ display: "block", width: "100%" }}
+              >
+                <Table.Tr
+                  className="font-bolder text-black"
+                  style={{ display: "flex" }}
+                >
+                  {tableHeaders}
+                </Table.Tr>
+              </Table.Thead>
+              <Table.Tbody style={{ display: "block", width: "100%" }}>
+                {data && (
+                  <List
+                    height={containerHeight - HEADER_HEIGHT}
+                    itemCount={data.length}
+                    itemSize={ROW_HEIGHT}
+                    width="100%"
+                    style={{ overflowX: "auto" }}
+                  >
+                    {Row}
+                  </List>
+                )}
+              </Table.Tbody>
+            </Table>
+          </div>
         </section>
-        <DataView selectedRows={selectedRows} onClick={removeFromSelectedRow} />
+        <DataView
+          data={data ?? []}
+          selectedRowsIndex={selectedRowsIndex}
+          onClick={removeFromSelectedRow}
+        />
       </div>
       <ClipboardTextArea value={copyButtonValue} />
     </>

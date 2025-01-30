@@ -1,7 +1,8 @@
 import { Textarea } from "@mantine/core";
 import { CopyClipboard } from "./CopyClipboard";
 import { TbClipboardList, TbArrowsDiagonalMinimize2 } from "react-icons/tb";
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { Supplier } from "./SheetsLayout";
 
 interface ClipboardTextAreaProps {
   value: string;
@@ -9,7 +10,7 @@ interface ClipboardTextAreaProps {
 
 export const ClipboardTextArea = ({ value }: ClipboardTextAreaProps) => {
   const [expand, setExpand] = useState(false);
-  return (
+    return (
     <div
       className="pointer-events-auto fixed bottom-1 left-5 rounded-lg border-[1px]"
       onClick={(e) => {
@@ -41,7 +42,7 @@ export const ClipboardTextArea = ({ value }: ClipboardTextAreaProps) => {
         </div>
         {expand && (
           <Textarea
-            contentEditable
+            // contentEditable
             autosize
             value={value}
             maxRows={20}
