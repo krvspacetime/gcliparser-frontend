@@ -155,11 +155,8 @@ export const SheetsLayout = () => {
                       onClick={(event) => handleRowClick(event, d, d.index)}
                       style={{
                         backgroundColor: selectedRowsIndex.includes(d.index)
-                          ? "gray"
+                          ? "lightgreen"
                           : "transparent",
-                        fontWeight: selectedRowsIndex.includes(d.index)
-                          ? "bold"
-                          : "normal",
                       }}
                     >
                       <Table.Td>{d.number}</Table.Td>

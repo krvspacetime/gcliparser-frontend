@@ -1,5 +1,7 @@
 import { MultiSelect } from "@mantine/core";
 import { Player } from "./SheetsLayout";
+import multistyle from "./multi.module.css";
+import { TbClipboardList, TbArrowsDiagonalMinimize2 } from "react-icons/tb";
 
 export const FilterSearch = ({
   data,
@@ -23,6 +25,8 @@ export const FilterSearch = ({
         searchable
         onChange={handleMultiSelectChange} // Update selection change handler
         value={value}
+        classNames={multistyle}
+        leftSection={<TbClipboardList />}
       />
     </section>
   );
