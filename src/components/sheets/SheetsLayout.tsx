@@ -18,32 +18,24 @@ export interface Supplier {
   email: string;
 }
 
-const headers = [
-  "Index",
-  "Name",
-  "Location",
-  "Contact Person",
-  "Role",
-  "Item",
-  "Contact Number",
-  "Email",
-];
-
-const omittedKeys = ["img_src_avatar", "caps", "index"];
-
 const ROW_HEIGHT = 35; // Adjust this value based on your table row height
 const HEADER_HEIGHT = 50; // Adjust this value based on your table header height
+const SHEETS = ["ITC MOCK SUPPLIER CONTACTS", "PH FOOTBALL WIKI DATA"];
 
 export const SheetsLayout = () => {
+  const [sheets, _] = useState<string[]>(SHEETS);
+  const [selectedSheet, setSelectedSheet] = useState(SHEETS[0]);
   const [multiSelectInputValue, setMultiSelectInputValue] = useState<string[]>(
     [],
   );
   const [data, setData] = useState<Supplier[] | null>(null);
-  const [selectedRows, setSelectedRows] = useState<Supplier[]>([]);
   const [selectedRowsIndex, setSelectedRowsIndex] = useState<number[]>([]);
-  const tableHeaders = headers.map((head, idx) => {
+  const [tableHeaders, setTableHeaders] = useState<string[]>([]);
+  const [omittedKeys, setOmittedKeys] = useState<string[]>([]);
+  const tableHeaders_ = tableHeaders.map((head, idx) => {
+    if (omittedKeys.includes(head)) return null;
     return (
-      <Table.Th key={idx} style={{ minWidth: "150px", width: "150px" }}>
+      <Table.Th key={idx} style={{ flex: "1 1 0" }}>
         {head}
       </Table.Th>
     );
@@ -61,9 +53,12 @@ export const SheetsLayout = () => {
     }
   }, []);
 
-  const fetchData = async () => {
+  const fetchData = async (sheetName: string) => {
     try {
-      const response = await fetch(`http://localhost:8000/df/cached`);
+      const params = new URLSearchParams({
+        sheet_name: sheetName,
+      });
+      const response = await fetch(`http://localhost:8000/df/cached?${params}`);
 
       if (!response) {
         throw new Error(`Error fetching data. ${response}`);
@@ -82,7 +77,8 @@ export const SheetsLayout = () => {
 
       const data = await response.json();
       console.log("data", data);
-      setData(data);
+      setData(data.data);
+      setTableHeaders(data.headers);
       return data;
     } catch (e) {
       console.error(e);
@@ -116,7 +112,6 @@ export const SheetsLayout = () => {
 
   const onClear = () => {
     setMultiSelectInputValue([]);
-    setSelectedRows([]);
     setSelectedRowsIndex([]);
   };
 
@@ -164,20 +159,21 @@ export const SheetsLayout = () => {
     setSelectedRowsIndex(newSelectedRowsIndex as number[]);
   };
 
+  const onChangeOmmitedKeys = (key: string) => {
+    setOmittedKeys((prev) => {
+      if (prev.includes(key)) return prev.filter((i) => i !== key);
+      return [...prev, key];
+    });
+  };
+
+  const onChangeSheet = (sheetName: string) => {
+    setSelectedSheet(sheetName);
+    fetchData(sheetName);
+  };
+
   useEffect(() => {
-    fetchData();
+    fetchData(sheets[0]);
   }, []);
-
-  useEffect(() => {
-    console.log("Data:", data);
-    console.log("Selected Rows Index:", selectedRowsIndex);
-
-    const selectedRows = data?.filter((supplier, index) =>
-      selectedRowsIndex.includes(index),
-    );
-    setSelectedRows(selectedRows || []);
-    console.log("selectedRowsIndex", selectedRowsIndex);
-  }, [data, selectedRowsIndex]);
 
   const Row = ({
     index,
@@ -203,30 +199,23 @@ export const SheetsLayout = () => {
           minWidth: "fit-content",
         }}
       >
-        <Table.Td style={{ minWidth: "150px", width: "150px" }}>
-          {d.index}
-        </Table.Td>
-        <Table.Td style={{ minWidth: "150px", width: "150px" }}>
-          {d.name}
-        </Table.Td>
-        <Table.Td style={{ minWidth: "150px", width: "150px" }}>
-          {d.location}
-        </Table.Td>
-        <Table.Td style={{ minWidth: "150px", width: "150px" }}>
-          {d.contact_person}
-        </Table.Td>
-        <Table.Td style={{ minWidth: "150px", width: "150px" }}>
-          {d.role}
-        </Table.Td>
-        <Table.Td style={{ minWidth: "150px", width: "150px" }}>
-          {d.item}
-        </Table.Td>
-        <Table.Td style={{ minWidth: "150px", width: "150px" }}>
-          {d.contact_number}
-        </Table.Td>
-        <Table.Td style={{ minWidth: "150px", width: "150px" }}>
-          {d.email}
-        </Table.Td>
+        {Object.keys(d).map(
+          (key) =>
+            !omittedKeys.includes(key) && (
+              <Table.Td
+                style={{
+                  // minWidth: "150px",
+                  flex: "1 1 0",
+                  // whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                }}
+                key={key}
+              >
+                {d[key as keyof Supplier]}
+              </Table.Td>
+            ),
+        )}
       </Table.Tr>
     );
   };
@@ -239,6 +228,12 @@ export const SheetsLayout = () => {
           value={multiSelectInputValue}
           onSelectionChange={handleSelectionChange}
           onClear={onClear}
+          headers={tableHeaders}
+          headersToOmit={omittedKeys}
+          onChangeHeaders={onChangeOmmitedKeys}
+          sheets={sheets}
+          selectedSheet={selectedSheet}
+          onChangeSheet={onChangeSheet}
         />
         <section className="p-5">
           <SheetLoader data={data} />
@@ -251,9 +246,12 @@ export const SheetsLayout = () => {
             }}
           >
             <Table
-              stickyHeader
-              striped
-              style={{ width: "100%", tableLayout: "fixed" }}
+              // stickyHeader
+              style={{
+                width: "100%",
+                tableLayout: "fixed",
+                overflow: "auto",
+              }}
             >
               <Table.Thead
                 className="z-[1001]"
@@ -263,7 +261,7 @@ export const SheetsLayout = () => {
                   className="font-bolder text-black"
                   style={{ display: "flex" }}
                 >
-                  {tableHeaders}
+                  {tableHeaders_}
                 </Table.Tr>
               </Table.Thead>
               <Table.Tbody style={{ display: "block", width: "100%" }}>
@@ -289,6 +287,7 @@ export const SheetsLayout = () => {
         />
       </div>
       <ClipboardTextArea value={copyButtonValue} />
+      {/* <SettingsModal /> */}
     </>
   );
 };

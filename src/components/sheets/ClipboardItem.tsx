@@ -33,9 +33,13 @@ export const ClipboardItem = ({
       </div>
       {expand && (
         <div className="block bg-emerald-100 px-3">
-          <p>Name: {supplier.name}</p>
-          <p>Position: {supplier.contact_person}</p>
-          <p>Number: {supplier.contact_number}</p>
+          {Object.keys(supplier)
+            .slice(0, 5)
+            .map((key) => (
+              <p key={key}>
+                {key}: {supplier[key as keyof Supplier]}
+              </p>
+            ))}
         </div>
       )}
     </div>

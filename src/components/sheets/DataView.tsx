@@ -25,7 +25,7 @@ export const DataView = ({
   return (
     <div
       className="fixed right-2 bottom-1 overflow-y-auto rounded-lg bg-white outline"
-      style={{ width: "250px", height: minimize ? "30px" : "500px" }}
+      style={{ width: "350px", height: minimize ? "30px" : "500px" }}
     >
       <div
         className="flex w-full items-center justify-between bg-zinc-300 px-2"
