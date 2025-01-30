@@ -1,6 +1,8 @@
+# Google Sheets Clipboard Parser
+
 ## Project Overview
 
-This project is designed to provide a robust solution for managing data using Google Sheets as a backend. It leverages modern web technologies to create an efficient and user-friendly interface.
+This project is designed to provide a robust solution for navigating Google Sheets using a web-based UI. It leverages modern web technologies to create an efficient and user-friendly interface to search and select rows of data to be copied to a clipboard.
 
 ## Technologies Used
 
@@ -14,14 +16,25 @@ This project is designed to provide a robust solution for managing data using Go
 - `src/`: Contains all the source code for the React application.
   - `components/`: Contains reusable components used throughout the application.
   - `sheets/`: Contains components specific to the sheets functionality.
-- `app.py`: The main FastAPI application file.
-- `sheets.py`: Contains functions for interacting with Google Sheets.
+
+## Backend
+
+This is the Github repo [link](https://github.com/krvspacetime/itc-sheets) for the backend code used by this project.
+
+### Packages and libraries used:
+- `FastAPI`: For the REST API
+- `gspread`: For interacting with the Google Sheet and OAuth
+- `pandas`: For turning the spreadsheet data into a dataframe
+- `dot-env`: For the environmental variables
+
 
 ## NPM Packages
 
 - `react`: The core library for building the user interface.
 - `react-dom`: Provides DOM-specific methods that can be used at the top level of your app.
 - `react-window`: Used for optimizing the rendering of large lists and tables.
+- `mantine`: React component library.
+- `Tailwind`: A CSS framework for rapidly building modern websites without ever leaving your HTML.
 
 ## Packages Used
 
@@ -34,7 +47,10 @@ This repository is a template using the following packages:
 - **React Router DOM**: ^7.1.3
 - **@mantine/core**: ^7.16.1
 - **@mantine/hooks**: ^7.16.1
-- **Tailwind CSS**: **^4.0.0** (highlighting the use of **Tailwind CSS 4.0**)
+- **@mantine/notifications: ^7.16.2
+- **Tailwind CSS**: ^4.0.0
+- **react-window**: ^1.8.11
+- **react-icons**: ^5.4.0
 
 ### DevDependencies:
 
