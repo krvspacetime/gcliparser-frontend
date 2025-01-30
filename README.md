@@ -1,60 +1,27 @@
-# React + TypeScript + Vite
+## Project Overview
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This project is designed to provide a robust solution for managing data using Google Sheets as a backend. It leverages modern web technologies to create an efficient and user-friendly interface.
 
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-This repository is a template for building modern web applications using React and Vite. It provides a solid foundation for developers looking to create responsive and interactive user interfaces with ease.
-
-## Relevant Packages:
+## Technologies Used
 
 - **React**: A JavaScript library for building user interfaces, allowing for the creation of reusable UI components.
-- **Vite**: A build tool that offers a fast development environment and optimized production builds.
+- **FastAPI**: A modern web framework for building APIs with Python, known for its fast performance and ease of use.
+- **gspread**: A Python library that allows for easy interaction with Google Sheets.
+- **react-window**: A library for efficiently rendering large lists and tabular data by only rendering what is visible on the screen.
 
-## Expanding the ESLint configuration
+## Project Layout
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+- `src/`: Contains all the source code for the React application.
+  - `components/`: Contains reusable components used throughout the application.
+  - `sheets/`: Contains components specific to the sheets functionality.
+- `app.py`: The main FastAPI application file.
+- `sheets.py`: Contains functions for interacting with Google Sheets.
 
-- Configure the top-level `parserOptions` property like this:
+## NPM Packages
 
-```js
-export default tseslint.config({
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ["./tsconfig.node.json", "./tsconfig.app.json"],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-});
-```
-
-- Replace `tseslint.configs.recommended` to `tseslint.configs.recommendedTypeChecked` or `tseslint.configs.strictTypeChecked`
-- Optionally add `...tseslint.configs.stylisticTypeChecked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and update the config:
-
-```js
-// eslint.config.js
-import react from "eslint-plugin-react";
-
-export default tseslint.config({
-  // Set the react version
-  settings: { react: { version: "18.3" } },
-  plugins: {
-    // Add the react plugin
-    react,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended rules
-    ...react.configs.recommended.rules,
-    ...react.configs["jsx-runtime"].rules,
-  },
-});
-```
+- `react`: The core library for building the user interface.
+- `react-dom`: Provides DOM-specific methods that can be used at the top level of your app.
+- `react-window`: Used for optimizing the rendering of large lists and tables.
 
 ## Packages Used
 
