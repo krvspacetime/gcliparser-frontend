@@ -10,9 +10,9 @@ interface ClipboardTextAreaProps {
 
 export const ClipboardTextArea = ({ value }: ClipboardTextAreaProps) => {
   const [expand, setExpand] = useState(false);
-    return (
+  return (
     <div
-      className="pointer-events-auto fixed bottom-1 left-5 rounded-lg border-[1px]"
+      className="pointer-events-auto fixed bottom-1 left-5 rounded-lg"
       onClick={(e) => {
         e.preventDefault();
         e.stopPropagation();

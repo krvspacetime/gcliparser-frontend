@@ -18,13 +18,9 @@ export const DataView = ({
     .map((index) => data.find((s) => s.index === index))
     .filter(Boolean);
 
-  useEffect(() => {
-    console.log("SELECTED ROWS", selectedRows);
-  }, [selectedRows]);
-
   return (
     <div
-      className="fixed right-2 bottom-1 overflow-y-auto rounded-lg bg-white outline"
+      className="fixed right-2 bottom-1 overflow-y-auto rounded-lg bg-white"
       style={{ width: "350px", height: minimize ? "30px" : "500px" }}
     >
       <div

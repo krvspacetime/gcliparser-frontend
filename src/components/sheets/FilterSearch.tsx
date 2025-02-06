@@ -1,8 +1,14 @@
 import { Button, MultiSelect, Select } from "@mantine/core";
 import { Supplier } from "./SheetsLayout";
 import multistyle from "./multi.module.css";
-import { CgSearchLoading } from "react-icons/cg";
+import { CgSearchLoading, CgSelect, CgSelectO } from "react-icons/cg";
 import { SettingsModal } from "./SettingsModal";
+import { PiFilePyThin } from "react-icons/pi";
+import { SiGooglesheets } from "react-icons/si";
+import { HiSelector } from "react-icons/hi";
+import { VscVmActive } from "react-icons/vsc";
+import { FcClearFilters } from "react-icons/fc";
+import { GrClearOption } from "react-icons/gr";
 
 export const FilterSearch = ({
   data,
@@ -34,19 +40,30 @@ export const FilterSearch = ({
   return (
     <div>
       <section className="flex w-full items-center justify-between gap-2 px-5">
-        <Button w={200} variant="light" color="green">
-          ACTIVE SHEET
+        <Button
+          miw={150}
+          variant="light"
+          color="#333"
+          rightSection={<VscVmActive size={20} />}
+        >
+          Active Sheet
         </Button>
         <Select
+          className="font-Montserrat"
           defaultValue={sheets[0]}
           placeholder="Pick value"
           data={sheets}
-          w={400}
+          miw={300}
           value={selectedSheet}
           onChange={(sheet) => sheet && onChangeSheet(sheet)}
+          styles={{
+            option: { fontSize: 12 },
+            input: { fontSize: 13 },
+          }}
+          rightSection={<SiGooglesheets size={20} />}
         />
         <MultiSelect
-          className="m-2 w-full rounded-md border-[1px]"
+          className="m-2 w-full rounded-md"
           placeholder="Select items"
           data={data && data.map((d) => d.name)}
           searchable
@@ -54,13 +71,17 @@ export const FilterSearch = ({
           value={value}
           classNames={multistyle}
           leftSection={<CgSearchLoading size={25} />}
+          styles={{
+            input: { maxHeight: 100 },
+          }}
+          hidePickedOptions
         />
         <Button
-          variant="filled"
-          color="gray"
+          variant="light"
+          color="#333"
           onClick={onClear}
-          className="border-[1px]"
-          w={150}
+          miw={100}
+          rightSection={<GrClearOption size={20} />}
         >
           Clear
         </Button>

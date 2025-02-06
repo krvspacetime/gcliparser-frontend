@@ -58,7 +58,9 @@ export const SheetsLayout = () => {
       const params = new URLSearchParams({
         sheet_name: sheetName,
       });
-      const response = await fetch(`http://localhost:8000/df/cached?${params}`);
+      const response = await fetch(
+        `http://localhost:8000/sheets/df/cached?${params}`,
+      );
 
       if (!response) {
         throw new Error(`Error fetching data. ${response}`);
@@ -76,7 +78,6 @@ export const SheetsLayout = () => {
       }
 
       const data = await response.json();
-      console.log("data", data);
       setData(data.data);
       setTableHeaders(data.headers);
       return data;
@@ -142,8 +143,6 @@ export const SheetsLayout = () => {
   }, [selectedRowsIndex, data]);
 
   const handleSelectionChange = (selectedValues: string[]) => {
-    console.log("selectedValues", selectedValues);
-
     // Update multiSelectInputValue directly from selectedValues
     setMultiSelectInputValue(selectedValues);
 
@@ -188,12 +187,14 @@ export const SheetsLayout = () => {
     return (
       <Table.Tr
         key={d.name + index}
+        className="rounded-lg"
         onClick={(event) => handleRowClick(event, d, d.index)}
         style={{
           ...style,
           backgroundColor: selectedRowsIndex.includes(d.index)
-            ? "lightgreen"
+            ? "#333"
             : "transparent",
+          color: selectedRowsIndex.includes(d.index) ? "white" : "black",
           display: "flex",
           width: "100%",
           minWidth: "fit-content",
@@ -287,7 +288,6 @@ export const SheetsLayout = () => {
         />
       </div>
       <ClipboardTextArea value={copyButtonValue} />
-      {/* <SettingsModal /> */}
     </>
   );
 };
