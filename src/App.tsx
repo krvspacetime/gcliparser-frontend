@@ -13,19 +13,19 @@ const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <Credentials />,
-        index: true,
-      },
-      {
-        path: "/app",
         element: <ProtectedRoute />,
         children: [
           {
-            path: "/app",
+            path: "/",
             element: <SheetsLayout />,
             index: true,
           },
         ],
+      },
+      {
+        path: "/auth",
+        element: <Credentials />,
+        index: true,
       },
     ],
   },

@@ -20,7 +20,7 @@ export interface Supplier {
 
 const ROW_HEIGHT = 35; // Adjust this value based on your table row height
 const HEADER_HEIGHT = 50; // Adjust this value based on your table header height
-const SHEETS = ["ITC MOCK SUPPLIER CONTACTS", "PH FOOTBALL WIKI DATA"];
+const SHEETS = ["ITC MOCK SUPPLIER CONTACTS", "PH FOOTBALL WIKI DATA"]; // Can change to fetch from API
 
 export const SheetsLayout = () => {
   const [sheets, _] = useState<string[]>(SHEETS);
@@ -205,9 +205,7 @@ export const SheetsLayout = () => {
             !omittedKeys.includes(key) && (
               <Table.Td
                 style={{
-                  // minWidth: "150px",
                   flex: "1 1 0",
-                  // whiteSpace: "nowrap",
                   overflow: "hidden",
                   textOverflow: "ellipsis",
                 }}
@@ -247,7 +245,6 @@ export const SheetsLayout = () => {
             }}
           >
             <Table
-              // stickyHeader
               style={{
                 width: "100%",
                 tableLayout: "fixed",

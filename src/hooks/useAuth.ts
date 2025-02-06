@@ -1,28 +1,40 @@
 import { useEffect, useState } from "react";
 
 export const useAuth = () => {
+  const [user, setUser] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const checkAuth = async () => {
     try {
-      const response = await fetch("http://localhost:8000/auth");
-      if (!response.ok) throw new Error("Error checking auth");
+      const response =
+        import.meta.env.VITE_NODE_ENV === "production"
+          ? await fetch(`${import.meta.env.VITE_API_URL}/auth`)
+          : await fetch(
+              `${import.meta.env.VITE_HOST}:${import.meta.env.VITE_PORT}/auth`,
+            );
 
-      const data: { status: string | null } = await response.json();
-      console.log(data);
-      if (data && data.status === "success") {
-        setIsAuthenticated(true);
-      } else {
-        setIsAuthenticated(false);
+      if (!response.ok) {
+        throw new Error(
+          `Network response was not ok. Error: ${response.statusText}`,
+        );
       }
-    } catch (e) {
+
+      const data = await response.json();
+      console.log("user", data.status);
+      setUser(data.status);
+      setIsAuthenticated(!!data.status);
+    } catch (error) {
+      console.error("Error fetching authentication status:", error);
+      setUser(null);
       setIsAuthenticated(false);
-      console.error(e);
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
     checkAuth();
   }, []);
-  return { isAuthenticated };
+  return { user, setUser, loading, isAuthenticated };
 };
