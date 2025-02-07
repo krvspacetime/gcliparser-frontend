@@ -1,14 +1,15 @@
 import { Button, MultiSelect, Select } from "@mantine/core";
-import { Supplier } from "./SheetsLayout";
-import multistyle from "./multi.module.css";
-import { CgSearchLoading, CgSelect, CgSelectO } from "react-icons/cg";
+import { CgSearchLoading } from "react-icons/cg";
 import { SettingsModal } from "./SettingsModal";
-import { PiFilePyThin } from "react-icons/pi";
 import { SiGooglesheets } from "react-icons/si";
-import { HiSelector } from "react-icons/hi";
 import { VscVmActive } from "react-icons/vsc";
-import { FcClearFilters } from "react-icons/fc";
 import { GrClearOption } from "react-icons/gr";
+import multistyle from "./multi.module.css";
+import { useSetAtom } from "jotai";
+import { sidebarOpenAtom } from "../../atoms/sidebar-atom";
+import { BiSidebar } from "react-icons/bi";
+import { motion } from "motion/react";
+import { Supplier } from "../../types/sheets";
 
 export const FilterSearch = ({
   data,
@@ -37,9 +38,25 @@ export const FilterSearch = ({
     onSelectionChange(selectedValues); // Call the handler passed from SheetsLayout
   };
 
+  // Sidebar
+  const setSidebarOpen = useSetAtom(sidebarOpenAtom);
+  const onOpenSidebar = (
+    e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+  ) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setSidebarOpen((prev) => !prev);
+  };
   return (
     <div>
       <section className="flex w-full items-center justify-between gap-2 px-5">
+        <motion.img
+          src="gcp.png"
+          height={35}
+          width={35}
+          whileHover={{ rotate: 360 }}
+          transition={{ duration: 0.5 }}
+        />
         <Button
           miw={150}
           variant="light"
@@ -48,6 +65,7 @@ export const FilterSearch = ({
         >
           Active Sheet
         </Button>
+
         <Select
           className="font-Montserrat"
           defaultValue={sheets[0]}
@@ -82,8 +100,18 @@ export const FilterSearch = ({
           onClick={onClear}
           miw={100}
           rightSection={<GrClearOption size={20} />}
+          disabled={!value.length}
         >
           Clear
+        </Button>
+        <Button
+          variant="light"
+          color="#333"
+          rightSection={<BiSidebar size={20} />}
+          miw={120}
+          onClick={onOpenSidebar}
+        >
+          Sidebar
         </Button>
         <SettingsModal
           headers={headers}

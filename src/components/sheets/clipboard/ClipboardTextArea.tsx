@@ -1,8 +1,7 @@
 import { Textarea } from "@mantine/core";
 import { CopyClipboard } from "./CopyClipboard";
-import { TbClipboardList, TbArrowsDiagonalMinimize2 } from "react-icons/tb";
-import { useMemo, useState } from "react";
-import { Supplier } from "./SheetsLayout";
+import { useState } from "react";
+import { BiChevronUp, BiChevronDown } from "react-icons/bi";
 
 interface ClipboardTextAreaProps {
   value: string;
@@ -20,14 +19,14 @@ export const ClipboardTextArea = ({ value }: ClipboardTextAreaProps) => {
     >
       <div className="relative">
         <div
-          className="flex w-full items-center justify-between rounded-t-lg bg-zinc-300 px-2"
+          className="flex w-full items-center justify-between rounded-t-lg bg-[#333] px-2"
           style={{
             height: "30px",
             minWidth: "200px",
           }}
         >
           <div className="flex gap-2">
-            <p>CLIPBOARD</p>
+            <p className="text-white">CLIPBOARD</p>
             <p>
               {value.length === 0 && (
                 <span className="from-neutral-400 font-thin">| EMPTY</span>
@@ -35,9 +34,19 @@ export const ClipboardTextArea = ({ value }: ClipboardTextAreaProps) => {
             </p>
           </div>
           <div className="flex gap-2">
-            <TbArrowsDiagonalMinimize2
-              onClick={() => setExpand((prev) => !prev)}
-            />
+            {expand ? (
+              <BiChevronUp
+                size={20}
+                onClick={() => setExpand(false)}
+                color="white"
+              />
+            ) : (
+              <BiChevronDown
+                size={20}
+                onClick={() => setExpand(true)}
+                color="white"
+              />
+            )}
           </div>
         </div>
         {expand && (

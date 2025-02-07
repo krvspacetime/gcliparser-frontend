@@ -3,20 +3,10 @@ import { useEffect, useMemo, useState, useRef } from "react";
 import { FixedSizeList as List } from "react-window";
 import { FilterSearch } from "./FilterSearch";
 import { SheetLoader } from "./SheetLoader";
-import { DataView } from "./DataView";
-import { ClipboardTextArea } from "./ClipboardTextArea";
+import { DataView } from "./inspector/DataView";
+import { ClipboardTextArea } from "./clipboard/ClipboardTextArea";
 import { notifications } from "@mantine/notifications";
-
-export interface Supplier {
-  index: number;
-  name: string;
-  location: string;
-  contact_person: string;
-  role: string;
-  item: string;
-  contact_number: string;
-  email: string;
-}
+import { Supplier } from "../../types/sheets";
 
 const ROW_HEIGHT = 35; // Adjust this value based on your table row height
 const HEADER_HEIGHT = 50; // Adjust this value based on your table header height
@@ -58,9 +48,14 @@ export const SheetsLayout = () => {
       const params = new URLSearchParams({
         sheet_name: sheetName,
       });
-      const response = await fetch(
-        `http://localhost:8000/sheets/df/cached?${params}`,
-      );
+      const response =
+        import.meta.env.VITE_NODE_ENV === "production"
+          ? await fetch(
+              `${import.meta.env.VITE_API_URL}/sheets/df/cached?${params}`,
+            )
+          : await fetch(
+              `${import.meta.env.VITE_HOST}:${import.meta.env.VITE_PORT}/sheets/df/cached?${params}`,
+            );
 
       if (!response) {
         throw new Error(`Error fetching data. ${response}`);
@@ -69,7 +64,7 @@ export const SheetsLayout = () => {
       if (response.redirected) {
         notifications.show({
           title: "Redirected",
-          message: "Cached not found to fetching fresh dataframe.",
+          message: "Cached not found. Fetching fresh dataframe.",
           position: "top-right",
           withCloseButton: true,
           withBorder: true,

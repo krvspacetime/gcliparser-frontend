@@ -1,6 +1,6 @@
-import { Button, CopyButton, Tooltip } from "@mantine/core";
+import { CopyButton, Tooltip } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
-import { useState } from "react";
+// import { useState } from "react";
 import { PiCopySimpleFill } from "react-icons/pi";
 
 interface CopyClipboardProps {
@@ -8,7 +8,7 @@ interface CopyClipboardProps {
 }
 
 export const CopyClipboard = ({ copyButtonValue }: CopyClipboardProps) => {
-  const [hovered, setHovered] = useState(false);
+  // const [hovered, setHovered] = useState(false);
   return (
     <Tooltip label="Copy items" variant="">
       <div>
@@ -26,10 +26,10 @@ export const CopyClipboard = ({ copyButtonValue }: CopyClipboardProps) => {
                   color: "gray",
                 });
               }}
-              size={hovered ? 30 : 25}
-              color={hovered ? "black" : "gray"}
-              onMouseOver={() => setHovered(true)}
-              onMouseLeave={() => setHovered(false)}
+              color={copied ? "black" : "#333"}
+              // size={hovered ? 30 : 25}
+              // onMouseOver={() => setHovered(true)}
+              // onMouseLeave={() => setHovered(false)}
             />
           )}
         </CopyButton>

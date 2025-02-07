@@ -1,4 +1,4 @@
-import { MantineProvider } from "@mantine/core";
+import { createTheme, MantineProvider } from "@mantine/core";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { AppLayout } from "./AppLayout";
 import { SheetsLayout } from "./components/sheets/SheetsLayout";
@@ -31,9 +31,13 @@ const router = createBrowserRouter([
   },
 ]);
 
+const theme = createTheme({
+  fontFamily: "Montserrat, sans-serif",
+});
+
 function App() {
   return (
-    <MantineProvider defaultColorScheme="light">
+    <MantineProvider defaultColorScheme="light" theme={theme}>
       <Notifications />
       <RouterProvider router={router} />
     </MantineProvider>
