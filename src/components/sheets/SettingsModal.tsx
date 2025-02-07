@@ -15,8 +15,15 @@ export const SettingsModal = ({
   const [opened, { open, close }] = useDisclosure(false);
   return (
     <>
-      <Modal opened={opened} onClose={close} size="xl">
+      <Modal
+        opened={opened}
+        onClose={close}
+        size="sm"
+        title="Select headers to omit"
+        transitionProps={{ transition: "pop-top-right" }}
+      >
         <div>
+          {/* <h3 className="mb-2">Select headers to omit</h3> */}
           <Checkbox.Group value={headersToOmit}>
             <div className="flex flex-col gap-1">
               {headers.map((header) => (

@@ -10,9 +10,8 @@ import { Supplier } from "../../types/sheets";
 import { useAtom, useAtomValue } from "jotai";
 import { selectedSheetAtom, sheetsAtom } from "../../atoms/sheets-atom";
 
-const ROW_HEIGHT = 35; // Adjust this value based on your table row height
-const HEADER_HEIGHT = 50; // Adjust this value based on your table header height
-const SHEETS = ["ITC MOCK SUPPLIER CONTACTS", "PH FOOTBALL WIKI DATA"]; // Can change to fetch from API
+const ROW_HEIGHT = 35;
+const HEADER_HEIGHT = 50;
 
 export const SheetsLayout = () => {
   const sheets = useAtomValue(sheetsAtom);
@@ -47,9 +46,11 @@ export const SheetsLayout = () => {
 
   const fetchData = async (sheetName: string | null) => {
     setData(null);
+    console.log("called");
+    console.log("sheet name", sheetName);
     try {
       const params = new URLSearchParams({
-        sheet_name: sheetName ?? "s",
+        sheet_name: sheetName ?? "",
       });
       const response =
         import.meta.env.VITE_NODE_ENV === "production"
@@ -64,23 +65,13 @@ export const SheetsLayout = () => {
         throw new Error(`Error fetching data. ${response}`);
       }
 
-      if (response.redirected) {
-        notifications.show({
-          title: "Redirected",
-          message: "Cached not found. Fetching fresh dataframe.",
-          position: "top-right",
-          withCloseButton: true,
-          withBorder: true,
-          color: "red",
-        });
-      }
-
       const data = await response.json();
+      console.log("data", data);
       setData(data.data);
       setTableHeaders(data.headers);
       return data;
     } catch (e) {
-      if (e instanceof Error) {
+      if (e instanceof Error && sheets && selectedSheet !== "") {
         notifications.show({
           title: "Error",
           message: `${e.message}. Check if the title of the sheet is spelled correctly or if you have internet connection.`,
@@ -151,18 +142,15 @@ export const SheetsLayout = () => {
   }, [selectedRowsIndex, data]);
 
   const handleSelectionChange = (selectedValues: string[]) => {
-    // Update multiSelectInputValue directly from selectedValues
     setMultiSelectInputValue(selectedValues);
 
-    // Update selectedRowsIndex based on the selected values
     const newSelectedRowsIndex = selectedValues
       .map((value) => {
         const supplier = data?.find((d) => d.name === value);
-        return supplier ? supplier.index : null; // Get the index or null if not found
+        return supplier ? supplier.index : null;
       })
-      .filter((index) => index !== null); // Filter out null values
+      .filter((index) => index !== null);
 
-    // Set the new selected rows index
     setSelectedRowsIndex(newSelectedRowsIndex as number[]);
   };
 

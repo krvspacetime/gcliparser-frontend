@@ -2,6 +2,7 @@ import { Textarea } from "@mantine/core";
 import { CopyClipboard } from "./CopyClipboard";
 import { useState } from "react";
 import { BiChevronUp, BiChevronDown } from "react-icons/bi";
+import { motion } from "framer-motion";
 
 interface ClipboardTextAreaProps {
   value: string;
@@ -10,8 +11,12 @@ interface ClipboardTextAreaProps {
 export const ClipboardTextArea = ({ value }: ClipboardTextAreaProps) => {
   const [expand, setExpand] = useState(false);
   return (
-    <div
+    <motion.div
+      layout
       className="pointer-events-auto fixed bottom-1 left-5 rounded-lg"
+      animate={{ height: expand ? "auto" : "30px" }}
+      transition={{ duration: 0.1 }}
+      style={{ overflow: "hidden" }}
       onClick={(e) => {
         e.preventDefault();
         e.stopPropagation();
@@ -27,13 +32,8 @@ export const ClipboardTextArea = ({ value }: ClipboardTextAreaProps) => {
         >
           <div className="flex gap-2">
             <p className="text-white">CLIPBOARD</p>
-            <p>
-              {value.length === 0 && (
-                <span className="from-neutral-400 font-thin">| EMPTY</span>
-              )}
-            </p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex gap-2 hover:cursor-pointer">
             {expand ? (
               <BiChevronUp
                 size={20}
@@ -50,24 +50,29 @@ export const ClipboardTextArea = ({ value }: ClipboardTextAreaProps) => {
           </div>
         </div>
         {expand && (
-          <Textarea
-            // contentEditable
-            autosize
-            value={value}
-            maxRows={20}
-            minRows={10}
-            w={400}
-            resize="vertical"
-            placeholder="Clipboard"
-            //   onChange={(event) => setValue(event.currentTarget.value)}
-          />
-        )}
-        {expand && (
-          <section className="absolute top-8 right-2">
-            <CopyClipboard copyButtonValue={value} />
-          </section>
+          <motion.div
+            layout
+            initial={{ height: 0 }}
+            animate={{ height: "auto" }}
+            exit={{ height: 0 }}
+            transition={{ duration: 0.3 }}
+          >
+            <Textarea
+              autosize
+              value={value}
+              maxRows={20}
+              minRows={10}
+              w={400}
+              resize="vertical"
+              placeholder="Clipboard"
+              //   onChange={(event) => setValue(event.currentTarget.value)}
+            />
+            <section className="absolute top-8 right-2">
+              <CopyClipboard copyButtonValue={value} />
+            </section>
+          </motion.div>
         )}
       </div>
-    </div>
+    </motion.div>
   );
 };

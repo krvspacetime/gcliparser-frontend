@@ -5,7 +5,7 @@ import { Button } from "@mantine/core";
 import { SiAuthy, SiGooglesearchconsole } from "react-icons/si";
 import { CiSettings } from "react-icons/ci";
 import { useNavigate } from "react-router-dom";
-import { BiChevronLeft, BiToggleLeft } from "react-icons/bi";
+import { BiChevronLeft } from "react-icons/bi";
 import { motion } from "motion/react";
 
 export const Sidebar = () => {

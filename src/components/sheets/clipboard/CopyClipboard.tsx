@@ -1,7 +1,6 @@
 import { CopyButton, Tooltip } from "@mantine/core";
 import { notifications } from "@mantine/notifications";
 // import { useState } from "react";
-import { PiCopySimpleFill } from "react-icons/pi";
 import { TbCopy, TbCopyCheck } from "react-icons/tb";
 
 interface CopyClipboardProps {

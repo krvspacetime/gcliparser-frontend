@@ -1,10 +1,12 @@
 import { Modal, Button, Checkbox, ScrollArea } from "@mantine/core";
 import { useDisclosure } from "@mantine/hooks";
-import { color, motion } from "framer-motion";
+import { motion } from "framer-motion";
 import { useAtom } from "jotai";
 import { sheetsAtom, selectedSheetAtom } from "../../../atoms/sheets-atom";
 import { MdDelete } from "react-icons/md";
 import { useState } from "react";
+import { AddSheetModal } from "./AddSheetModal";
+import { SiGooglesheets } from "react-icons/si";
 
 export const RemoveSheetsModal = () => {
   const [opened, { open, close }] = useDisclosure(false);
@@ -68,8 +70,24 @@ export const RemoveSheetsModal = () => {
               </div>
             </ScrollArea>
           ) : (
-            <div className="py-4 text-center text-gray-500">
-              No sheets to manage
+            <div className="flex flex-col items-center justify-center gap-2">
+              <motion.div
+                initial={{ opacity: 0, y: -50 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, type: "tween" }}
+              >
+                <SiGooglesheets size={50} />
+              </motion.div>
+              <p>Empty.</p>
+              <motion.div
+                initial={{ opacity: 0, x: -50 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.2 }}
+                className="flex justify-center gap-2 py-4 text-center text-gray-500"
+              >
+                <AddSheetModal />
+                <p>Add s sheet.</p>
+              </motion.div>
             </div>
           )}
 

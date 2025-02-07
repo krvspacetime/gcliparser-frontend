@@ -2,7 +2,7 @@ import { Button, MultiSelect, Select } from "@mantine/core";
 import { CgSearchLoading } from "react-icons/cg";
 import { SettingsModal } from "./SettingsModal";
 import { SiGooglesheets } from "react-icons/si";
-import { VscVmActive } from "react-icons/vsc";
+import { VscVmActive, VscVmOutline } from "react-icons/vsc";
 import { GrClearOption } from "react-icons/gr";
 import multistyle from "./multi.module.css";
 import { useSetAtom } from "jotai";
@@ -50,7 +50,12 @@ export const FilterSearch = ({
     setSidebarOpen((prev) => !prev);
   };
   return (
-    <div>
+    <motion.div
+      initial={{ x: -100 }}
+      animate={{ x: 0 }}
+      transition={{ duration: 0.5 }}
+      className="z-[1001]"
+    >
       <section className="flex w-full items-center justify-between gap-2 px-5">
         <motion.img
           src="gcp.png"
@@ -61,12 +66,18 @@ export const FilterSearch = ({
           onClick={() => setSidebarOpen((prev) => !prev)}
         />
         <Button
-          miw={150}
+          miw={180}
           variant="light"
           color="#333"
-          rightSection={<VscVmActive size={20} />}
+          rightSection={
+            sheets && selectedSheet ? (
+              <VscVmActive size={20} />
+            ) : (
+              <VscVmOutline size={20} />
+            )
+          }
         >
-          Active Sheet
+          {sheets && selectedSheet ? "Active sheet" : "No active sheet"}
         </Button>
         <Select
           className="font-Montserrat"
@@ -128,6 +139,6 @@ export const FilterSearch = ({
           onChangeHeaders={onChangeHeaders}
         />
       </section>
-    </div>
+    </motion.div>
   );
 };

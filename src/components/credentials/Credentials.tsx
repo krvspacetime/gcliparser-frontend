@@ -1,19 +1,23 @@
 import { Button, FileInput, Tooltip } from "@mantine/core";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { MdOutlineKey } from "react-icons/md";
 import { notifications } from "@mantine/notifications";
 import { PiCheckCircleFill } from "react-icons/pi";
 import { useNavigate } from "react-router-dom";
-import { BiCheckCircle } from "react-icons/bi";
+import { BiCheckCircle, BiChevronRight } from "react-icons/bi";
 import notifStyles from "../../styles/notifications.module.css";
 import { FaArrowRight, FaGofore } from "react-icons/fa";
 import { motion } from "motion/react";
+import { sidebarOpenAtom } from "../../atoms/sidebar-atom";
+import { useSetAtom } from "jotai";
+import { useAuth } from "../../hooks/useAuth";
 
 export const Credentials = () => {
   const [file, setFile] = useState<File | null>(null);
   const navigate = useNavigate();
-
+  const setSidebarOpen = useSetAtom(sidebarOpenAtom);
   const handleFileChange = (file: File | null) => {
+    console.log("File selected:", file);
     try {
       if (!file) throw new Error("Error uploading file");
       setFile(file);
@@ -34,22 +38,14 @@ export const Credentials = () => {
   };
 
   const sendFileData = async () => {
+    console.log("file", file);
     try {
       const formData = new FormData();
       formData.append("file", file!);
-      const response =
-        import.meta.env.VITE_NODE_ENV === "development"
-          ? await fetch(`${import.meta.env.VITE_API_URL}/auth`, {
-              method: "POST",
-              body: formData,
-            })
-          : await fetch(
-              `${import.meta.env.VITE_HOST}:${import.meta.env.VITE_PORT}/auth`,
-              {
-                method: "POST",
-                body: formData,
-              },
-            );
+      const response = await fetch("http://localhost:8000/auth/", {
+        method: "POST",
+        body: formData,
+      });
 
       if (!response.ok) throw new Error("Error sending file");
 
@@ -62,7 +58,6 @@ export const Credentials = () => {
       navigate("/");
     } catch (error) {
       console.error(error);
-
       notifications.show({
         title: "Error",
         message: "Something went wrong",
@@ -111,6 +106,28 @@ export const Credentials = () => {
       }
     }
   };
+
+  const { user, loading } = useAuth();
+
+  useEffect(() => {
+    if (loading) return;
+
+    if (user) {
+      notifications.show({
+        title: "Success",
+        message: "You are logged in.",
+        color: "teal",
+        autoClose: 2000,
+      });
+    } else {
+      notifications.show({
+        title: "Error",
+        message: "You are not logged in.",
+        color: "red",
+        autoClose: 2000,
+      });
+    }
+  }, [user, loading]);
   return (
     <motion.div
       className="flex h-screen w-full flex-col items-center justify-center gap-2"
@@ -171,6 +188,18 @@ export const Credentials = () => {
             >
               Go to app
             </Button>
+          </Tooltip>
+        </motion.div>
+        <motion.div
+          className="absolute top-2 left-4"
+          initial={{ x: -50 }}
+          animate={{ x: 0 }}
+          transition={{ duration: 0.5 }}
+          whileHover={{ scale: 1.1, x: 5, cursor: "pointer" }}
+          onClick={() => setSidebarOpen((prev) => !prev)}
+        >
+          <Tooltip variant="light" label="Open sidebar.">
+            <BiChevronRight size={30} />
           </Tooltip>
         </motion.div>
       </div>

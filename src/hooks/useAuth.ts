@@ -7,12 +7,6 @@ export const useAuth = () => {
 
   const checkAuth = async () => {
     try {
-      // const response =
-      //   import.meta.env.VITE_NODE_ENV === "production"
-      //     ? await fetch(`${import.meta.env.VITE_API_URL}/auth`)
-      //     : await fetch(
-      //         `${import.meta.env.VITE_HOST}:${import.meta.env.VITE_PORT}/auth`,
-      //       );
       const response = await fetch("http://localhost:8000/auth");
       if (!response.ok) {
         throw new Error(
@@ -21,7 +15,6 @@ export const useAuth = () => {
       }
 
       const data = await response.json();
-      console.log("user", data.status);
       setUser(data.status);
       setIsAuthenticated(!!data.status);
     } catch (error) {

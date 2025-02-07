@@ -12,7 +12,7 @@ export const AddSheetModal = () => {
   const [opened, { open, close }] = useDisclosure(false);
   const [value, setValue] = useState("");
   const [sheets, setSheets] = useAtom(sheetsAtom);
-  const [selectedSheet, setSelectedSheet] = useAtom(selectedSheetAtom);
+  const setSelectedSheet = useSetAtom(selectedSheetAtom);
   const addSheet = (value: string) => {
     if (sheets?.includes(value)) {
       notifications.show({
@@ -50,7 +50,7 @@ export const AddSheetModal = () => {
     }
   };
   return (
-    <div>
+    <div className="pointer-events-auto">
       <Modal
         opened={opened}
         onClose={close}
@@ -89,7 +89,7 @@ export const AddSheetModal = () => {
         whileHover={{ scale: 1.1 }}
         whileTap={{ scale: 0.9 }}
         onClick={open}
-        className="flex rounded bg-[#333]/10 p-1 hover:cursor-pointer"
+        className="flex max-w-[30px] rounded bg-[#333]/10 p-1 hover:cursor-pointer"
       >
         <IoMdAdd size={20} />
       </motion.div>
