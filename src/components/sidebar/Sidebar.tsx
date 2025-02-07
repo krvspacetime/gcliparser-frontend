@@ -19,10 +19,11 @@ export const Sidebar = () => {
         style={{ visibility: sidebarOpen ? "visible" : "hidden" }}
       >
         <div className="flex w-full justify-center">
-          <BsGoogle size={50} />
+          <motion.div initial={{ x: -50 }} animate={{ x: 0 }}>
+            <BsGoogle size={50} />
+          </motion.div>
         </div>
-
-        <div className="flex w-full flex-col justify-center gap-1">
+        <motion.div className="flex w-full flex-col justify-center gap-1">
           <Button
             variant="subtle"
             rightSection={<SiGooglesearchconsole size={20} />}
@@ -41,7 +42,7 @@ export const Sidebar = () => {
           >
             Credentials
           </Button>
-        </div>
+        </motion.div>
         <div className="flex w-full flex-col justify-center gap-1">
           <Button
             variant="subtle"
@@ -55,7 +56,7 @@ export const Sidebar = () => {
           className="absolute top-2 right-2"
           initial={{ x: 0 }}
           animate={{ rotate: sidebarOpen ? 360 : 0 }}
-          whileHover={{ x: -10 }}
+          whileHover={{ x: -5 }}
         >
           <BiChevronLeft
             size={30}

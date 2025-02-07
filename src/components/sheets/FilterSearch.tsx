@@ -10,6 +10,8 @@ import { sidebarOpenAtom } from "../../atoms/sidebar-atom";
 import { BiSidebar } from "react-icons/bi";
 import { motion } from "motion/react";
 import { Supplier } from "../../types/sheets";
+import { AddSheetModal } from "./modals/AddSheetModal";
+import { RemoveSheetsModal } from "./modals/RemoveSheetsModal";
 
 export const FilterSearch = ({
   data,
@@ -56,6 +58,7 @@ export const FilterSearch = ({
           width={35}
           whileHover={{ rotate: 360 }}
           transition={{ duration: 0.5 }}
+          onClick={() => setSidebarOpen((prev) => !prev)}
         />
         <Button
           miw={150}
@@ -65,21 +68,27 @@ export const FilterSearch = ({
         >
           Active Sheet
         </Button>
-
         <Select
           className="font-Montserrat"
           defaultValue={sheets[0]}
-          placeholder="Pick value"
+          placeholder={
+            sheets.length > 0
+              ? "Pick a sheet"
+              : "Empty sheets list, click + to add."
+          }
+          searchable
           data={sheets}
           miw={300}
-          value={selectedSheet}
+          value={selectedSheet !== "" ? selectedSheet : null}
           onChange={(sheet) => sheet && onChangeSheet(sheet)}
           styles={{
             option: { fontSize: 12 },
             input: { fontSize: 13 },
           }}
-          rightSection={<SiGooglesheets size={20} />}
+          rightSection={<SiGooglesheets size={20} color="#333" />}
         />
+        <AddSheetModal />
+        <RemoveSheetsModal />
         <MultiSelect
           className="m-2 w-full rounded-md"
           placeholder="Select items"

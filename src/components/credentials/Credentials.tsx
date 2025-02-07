@@ -1,4 +1,4 @@
-import { Button, FileInput } from "@mantine/core";
+import { Button, FileInput, Tooltip } from "@mantine/core";
 import { useState } from "react";
 import { MdOutlineKey } from "react-icons/md";
 import { notifications } from "@mantine/notifications";
@@ -6,6 +6,8 @@ import { PiCheckCircleFill } from "react-icons/pi";
 import { useNavigate } from "react-router-dom";
 import { BiCheckCircle } from "react-icons/bi";
 import notifStyles from "../../styles/notifications.module.css";
+import { FaArrowRight, FaGofore } from "react-icons/fa";
+import { motion } from "motion/react";
 
 export const Credentials = () => {
   const [file, setFile] = useState<File | null>(null);
@@ -110,32 +112,68 @@ export const Credentials = () => {
     }
   };
   return (
-    <div className="flex h-screen w-full flex-col items-center justify-center gap-2">
+    <motion.div
+      className="flex h-screen w-full flex-col items-center justify-center gap-2"
+      initial={{ opacity: 0, y: -30 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
       <div className="flex w-[600px] gap-2">
-        <FileInput
-          w={300}
-          accept="application/json"
-          placeholder="Select credentials file"
-          leftSection={<MdOutlineKey size={25} color="gray" />}
-          onChange={handleFileChange}
-          styles={{
-            input: { color: "gray" },
-          }}
-          rightSection={file ? <PiCheckCircleFill /> : null}
-        />
-        <Button
-          color="#333"
-          variant="light"
-          onClick={sendFileData}
-          disabled={!file}
-          w={150}
+        <motion.div
+          initial={{ x: -50 }}
+          animate={{ x: 0 }}
+          transition={{ duration: 0.5 }}
         >
-          Upload
-        </Button>
-        <Button variant="light" color="#333" onClick={navigateToApp} w={150}>
-          Go to app
-        </Button>
+          <FileInput
+            w={300}
+            accept="application/json"
+            placeholder="Select credentials file"
+            leftSection={<MdOutlineKey size={25} color="gray" />}
+            onChange={handleFileChange}
+            styles={{
+              input: { color: "gray" },
+            }}
+            rightSection={file ? <PiCheckCircleFill /> : null}
+          />
+        </motion.div>
+        <motion.div
+          initial={{ x: 50 }}
+          animate={{ x: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <Button
+            color="#333"
+            variant="light"
+            onClick={sendFileData}
+            disabled={!file}
+            w={150}
+          >
+            Upload
+          </Button>
+        </motion.div>
+        <motion.div
+          className="absolute top-2 right-4"
+          initial={{ x: 50 }}
+          animate={{ x: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <Tooltip
+            variant="light"
+            label="If credentials are already set, go to app to check if they are valid."
+          >
+            <Button
+              variant="light"
+              color="#333"
+              onClick={navigateToApp}
+              miw={200}
+              leftSection={<FaGofore size={20} />}
+              rightSection={<FaArrowRight size={20} />}
+            >
+              Go to app
+            </Button>
+          </Tooltip>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 };

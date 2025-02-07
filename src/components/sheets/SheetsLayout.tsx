@@ -3,18 +3,20 @@ import { useEffect, useMemo, useState, useRef } from "react";
 import { FixedSizeList as List } from "react-window";
 import { FilterSearch } from "./FilterSearch";
 import { SheetLoader } from "./SheetLoader";
-import { DataView } from "./inspector/DataView";
+import { Inspector } from "./inspector/Inspector";
 import { ClipboardTextArea } from "./clipboard/ClipboardTextArea";
 import { notifications } from "@mantine/notifications";
 import { Supplier } from "../../types/sheets";
+import { useAtom, useAtomValue } from "jotai";
+import { selectedSheetAtom, sheetsAtom } from "../../atoms/sheets-atom";
 
 const ROW_HEIGHT = 35; // Adjust this value based on your table row height
 const HEADER_HEIGHT = 50; // Adjust this value based on your table header height
 const SHEETS = ["ITC MOCK SUPPLIER CONTACTS", "PH FOOTBALL WIKI DATA"]; // Can change to fetch from API
 
 export const SheetsLayout = () => {
-  const [sheets, _] = useState<string[]>(SHEETS);
-  const [selectedSheet, setSelectedSheet] = useState(SHEETS[0]);
+  const sheets = useAtomValue(sheetsAtom);
+  const [selectedSheet, setSelectedSheet] = useAtom(selectedSheetAtom);
   const [multiSelectInputValue, setMultiSelectInputValue] = useState<string[]>(
     [],
   );
@@ -43,10 +45,11 @@ export const SheetsLayout = () => {
     }
   }, []);
 
-  const fetchData = async (sheetName: string) => {
+  const fetchData = async (sheetName: string | null) => {
+    setData(null);
     try {
       const params = new URLSearchParams({
-        sheet_name: sheetName,
+        sheet_name: sheetName ?? "s",
       });
       const response =
         import.meta.env.VITE_NODE_ENV === "production"
@@ -77,6 +80,16 @@ export const SheetsLayout = () => {
       setTableHeaders(data.headers);
       return data;
     } catch (e) {
+      if (e instanceof Error) {
+        notifications.show({
+          title: "Error",
+          message: `${e.message}. Check if the title of the sheet is spelled correctly or if you have internet connection.`,
+          position: "top-right",
+          withCloseButton: true,
+          withBorder: true,
+          color: "red",
+        });
+      }
       console.error(e);
     }
   };
@@ -160,14 +173,15 @@ export const SheetsLayout = () => {
     });
   };
 
-  const onChangeSheet = (sheetName: string) => {
-    setSelectedSheet(sheetName);
+  const onChangeSheet = (sheetName: string | null) => {
+    setSelectedSheet(sheetName ?? "");
     fetchData(sheetName);
   };
 
   useEffect(() => {
-    fetchData(sheets[0]);
-  }, []);
+    if (!sheets) return;
+    fetchData(selectedSheet);
+  }, [sheets, selectedSheet]);
 
   const Row = ({
     index,
@@ -225,12 +239,16 @@ export const SheetsLayout = () => {
           headers={tableHeaders}
           headersToOmit={omittedKeys}
           onChangeHeaders={onChangeOmmitedKeys}
-          sheets={sheets}
-          selectedSheet={selectedSheet}
+          sheets={sheets ?? []}
+          selectedSheet={selectedSheet ?? ""}
           onChangeSheet={onChangeSheet}
         />
         <section className="p-5">
-          <SheetLoader data={data} />
+          <SheetLoader
+            data={data}
+            sheets={sheets}
+            selectedSheet={selectedSheet}
+          />
           <div
             ref={tableContainerRef}
             style={{
@@ -273,7 +291,7 @@ export const SheetsLayout = () => {
             </Table>
           </div>
         </section>
-        <DataView
+        <Inspector
           data={data ?? []}
           selectedRowsIndex={selectedRowsIndex}
           onClick={removeFromSelectedRow}

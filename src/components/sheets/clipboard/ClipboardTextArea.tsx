@@ -19,10 +19,10 @@ export const ClipboardTextArea = ({ value }: ClipboardTextAreaProps) => {
     >
       <div className="relative">
         <div
-          className="flex w-full items-center justify-between rounded-t-lg bg-[#333] px-2"
+          className="flex w-full items-center justify-between rounded-lg bg-[#333] px-2"
           style={{
             height: "30px",
-            minWidth: "200px",
+            minWidth: "400px",
           }}
         >
           <div className="flex gap-2">
@@ -63,7 +63,7 @@ export const ClipboardTextArea = ({ value }: ClipboardTextAreaProps) => {
           />
         )}
         {expand && (
-          <section className="absolute right-1 bottom-1">
+          <section className="absolute top-8 right-2">
             <CopyClipboard copyButtonValue={value} />
           </section>
         )}

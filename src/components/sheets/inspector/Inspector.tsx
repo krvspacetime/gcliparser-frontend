@@ -1,10 +1,10 @@
 import { useState } from "react";
 import { ClipboardItem } from "../clipboard/ClipboardItem";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { BiChevronDown, BiChevronUp } from "react-icons/bi";
 import { Supplier } from "../../../types/sheets";
 
-export const DataView = ({
+export const Inspector = ({
   selectedRowsIndex,
   data,
   onClick,
@@ -33,10 +33,8 @@ export const DataView = ({
       >
         <div className="flex gap-2">
           <p>
-            Selected items:{" "}
-            <span className="font-extrabold text-white">
-              {selectedRows.length}
-            </span>
+            Rows selected:{" "}
+            <span className="text-white">{selectedRows.length}</span>
           </p>
         </div>
         <div className="flex cursor-pointer gap-2">
@@ -55,13 +53,22 @@ export const DataView = ({
       </div>
       {minimize ? null : (
         <div className="block px-3">
-          {selectedRows.map((supplier, idx) => (
-            <ClipboardItem
-              supplier={supplier as Supplier}
-              key={supplier && supplier.name}
-              onClick={() => onClick(selectedRowsIndex[idx])} // Pass the index from selectedRowsIndex
-            />
-          ))}
+          <AnimatePresence mode="popLayout">
+            {selectedRows.map((supplier, idx) => (
+              <motion.div
+                key={supplier?.index}
+                initial={{ opacity: 0, height: 0, y: -20 }}
+                animate={{ opacity: 1, height: "auto", y: 0 }}
+                exit={{ opacity: 0, height: 0, y: -20 }}
+                transition={{ duration: 0.2 }}
+              >
+                <ClipboardItem
+                  supplier={supplier as Supplier}
+                  onClick={() => onClick(selectedRowsIndex[idx])}
+                />
+              </motion.div>
+            ))}
+          </AnimatePresence>
         </div>
       )}
     </motion.div>
