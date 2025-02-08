@@ -55,10 +55,10 @@ export const SheetsLayout = () => {
       const response =
         import.meta.env.VITE_NODE_ENV === "production"
           ? await fetch(
-              `${import.meta.env.VITE_API_URL}/sheets/df/cached?${params}`,
+              `${import.meta.env.VITE_PROD_URL}/sheets/df/cached?${params}`,
             )
           : await fetch(
-              `${import.meta.env.VITE_HOST}:${import.meta.env.VITE_PORT}/sheets/df/cached?${params}`,
+              `${import.meta.env.VITE_LOCALHOST}:${import.meta.env.VITE_PORT}/sheets/df/cached?${params}`,
             );
 
       if (!response) {
@@ -66,9 +66,8 @@ export const SheetsLayout = () => {
       }
 
       const data = await response.json();
-      console.log("data", data);
       setData(data.data);
-      setTableHeaders(data.headers);
+      setTableHeaders(data.headers ?? []);
       return data;
     } catch (e) {
       if (e instanceof Error && sheets && selectedSheet !== "") {

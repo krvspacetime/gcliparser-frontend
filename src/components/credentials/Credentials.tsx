@@ -42,10 +42,16 @@ export const Credentials = () => {
     try {
       const formData = new FormData();
       formData.append("file", file!);
-      const response = await fetch("http://localhost:8000/auth/", {
-        method: "POST",
-        body: formData,
-      });
+      const response =
+        import.meta.env.VITE_NODE_ENV == "production"
+          ? await fetch(`${import.meta.env.VITE_PROD_URL}/auth/`, {
+              method: "POST",
+              body: formData,
+            })
+          : await fetch("http://localhost:8000/auth/", {
+              method: "POST",
+              body: formData,
+            });
 
       if (!response.ok) throw new Error("Error sending file");
 
@@ -76,7 +82,12 @@ export const Credentials = () => {
     });
 
     try {
-      const response = await fetch("http://localhost:8000/auth");
+      const response =
+        import.meta.env.VITE_NODE_ENV == "production"
+          ? await fetch(`${import.meta.env.VITE_PROD_URL}/auth/`)
+          : await fetch(
+              `${import.meta.env.VITE_LOCALHOST}:${import.meta.env.VITE_PORT}/auth/`,
+            );
 
       if (!response.ok) throw new Error(`Error: ${response.statusText}`);
       const data = await response.json();
@@ -101,7 +112,6 @@ export const Credentials = () => {
           title: "Error",
           message: e.message,
           loading: false,
-          // autoClose: 2000,
         });
       }
     }

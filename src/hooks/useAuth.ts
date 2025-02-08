@@ -7,7 +7,12 @@ export const useAuth = () => {
 
   const checkAuth = async () => {
     try {
-      const response = await fetch("http://localhost:8000/auth");
+      const response =
+        import.meta.env.VITE_NODE_ENV === "production"
+          ? await fetch(`${import.meta.env.VITE_PROD_URL}/auth/`)
+          : await fetch(
+              `${import.meta.env.VITE_LOCALHOST}:${import.meta.env.VITE_PORT}/auth/`,
+            );
       if (!response.ok) {
         throw new Error(
           `Network response was not ok. Error: ${response.statusText}`,
