@@ -145,7 +145,7 @@ export const Credentials = () => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
     >
-      <div className="flex w-[600px] gap-2">
+      <div className="flex w-[600px] justify-center gap-2">
         <motion.div
           initial={{ x: -50 }}
           animate={{ x: 0 }}
@@ -154,14 +154,26 @@ export const Credentials = () => {
           <FileInput
             w={300}
             accept="application/json"
-            placeholder="Select credentials file"
+            // placeholder="Select credentials file"
             leftSection={<MdOutlineKey size={25} color="gray" />}
             onChange={handleFileChange}
             styles={{
               input: { color: "gray" },
             }}
             rightSection={file ? <PiCheckCircleFill /> : null}
+            className="flex-none"
           />
+          {!file && !user ? (
+            <p className="text-xs text-gray-500">
+              Please select credentials file.
+            </p>
+          ) : user ? (
+            <p className="text-xs text-green-500">
+              Valid credentials already uploaded to server.
+            </p>
+          ) : (
+            <></>
+          )}
         </motion.div>
         <motion.div
           initial={{ x: 50 }}
@@ -188,16 +200,23 @@ export const Credentials = () => {
             variant="light"
             label="If credentials are already set, go to app to check if they are valid."
           >
-            <Button
-              variant="light"
-              color="#333"
-              onClick={navigateToApp}
-              miw={200}
-              leftSection={<FaGofore size={20} />}
-              rightSection={<FaArrowRight size={20} />}
-            >
-              Go to app
-            </Button>
+            <div className="flex flex-col items-center">
+              <Button
+                variant="light"
+                color="#333"
+                onClick={navigateToApp}
+                miw={200}
+                leftSection={<FaGofore size={20} />}
+                rightSection={<FaArrowRight size={20} />}
+              >
+                Go to app
+              </Button>
+              {user ? (
+                <p className="text-xs text-green-500">Already signed in</p>
+              ) : (
+                <></>
+              )}
+            </div>
           </Tooltip>
         </motion.div>
         <motion.div
